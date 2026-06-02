@@ -1,13 +1,14 @@
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import cookie from 'cookie-parser';
 import helmet from 'helmet';
-import { NestFactory } from '@nestjs/core';
+
 import { AppModule } from './app.module';
 import {
   AppConfigService,
   HttpConfigService,
   SecurityConfigService,
 } from './config';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,7 +17,6 @@ async function bootstrap() {
   const securityConfig = app.get(SecurityConfigService);
   const httpConfig = app.get(HttpConfigService);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   app.use(
     helmet({
       contentSecurityPolicy: securityConfig.CONTENT_SECURITY_POLICY,
@@ -39,7 +39,6 @@ async function bootstrap() {
     }),
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   app.use(cookie(securityConfig.COOKIE_KEY));
 
   await app.listen(appConfig.PORT);
