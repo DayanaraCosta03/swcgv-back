@@ -6,4 +6,6 @@
 
 - Crear una copia del archivo `.env.example` con el nombre `.env` y configurarlo
 
+- Instala las dependencias con `npm install`
+
 - Iniciar el servidor de desarrollo con `npm run start:dev`
