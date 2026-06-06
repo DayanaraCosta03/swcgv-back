@@ -8,4 +8,6 @@
 
 - Instala las dependencias con `npm install`
 
+- Ejecuta el seed con `npm run seed`
+
 - Iniciar el servidor de desarrollo con `npm run start:dev`
