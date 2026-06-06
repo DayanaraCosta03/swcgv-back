@@ -16,6 +16,15 @@ export class UserTypeormEntity {
 
   @Column({ type: 'text' })
   password: string;
+
+  @Column({ type: 'enum', enum: ['admin', 'seller'] })
+  role: string;
+
+  @Column({ type: 'boolean', default: true })
+  needChangePassword: boolean;
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 }
 
 export const USER_REPOSITORY = Symbol('USER');
