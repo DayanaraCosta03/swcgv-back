@@ -17,6 +17,7 @@ export class DatabaseConfigService extends BaseConfigService {
       password: this.getString('MAIN_DATABASE_PASSWORD'),
       database: this.getString('MAIN_DATABASE_NAME'),
       synchronize: this.getBoolean('MAIN_DATABASE_SYNCHRONIZE'),
+      ssl: this.getBoolean('MAIN_DATABASE_SSL'),
       timezone: this.getString('MAIN_DATABASE_TIMEZONE'),
     };
   }

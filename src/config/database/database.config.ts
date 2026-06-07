@@ -7,5 +7,6 @@ export const databaseConfigSchema = {
   MAIN_DATABASE_PASSWORD: Joi.string().required(),
   MAIN_DATABASE_NAME: Joi.string().required(),
   MAIN_DATABASE_SYNCHRONIZE: Joi.boolean().required(),
+  MAIN_DATABASE_SSL: Joi.boolean().required(),
   MAIN_DATABASE_TIMEZONE: Joi.string().required(),
 };

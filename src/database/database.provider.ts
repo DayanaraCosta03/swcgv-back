@@ -1,6 +1,8 @@
 import { Provider } from '@nestjs/common';
 import { DatabaseConfigService } from 'src/config';
 import { DataSource } from 'typeorm';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export const MAIN_DATA_SOURCE = Symbol('MAIN_DATA_SOURCE');
 
@@ -19,6 +21,15 @@ export const databaseProviders: Provider[] = [
         password: config.password,
         database: config.database,
         entities: [__dirname + '/../**/*.typeorm.entity{.ts,.js}'],
+        ssl:
+          config.ssl === true
+            ? {
+                rejectUnauthorized: true,
+                ca: fs
+                  .readFileSync(path.join(__dirname, '..', '..', 'ca.pem'))
+                  .toString(),
+              }
+            : undefined,
         synchronize: config.synchronize,
       });
 
