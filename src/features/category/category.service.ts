@@ -11,6 +11,7 @@ import {
 import { QueryFailedError, Repository } from 'typeorm';
 
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { QueryCategoryDto } from './dto/query-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
@@ -20,8 +21,22 @@ export class CategoryService {
     private readonly categoryRepository: Repository<CategoryTypeOrmEntity>,
   ) {}
 
-  findAll() {
-    return this.categoryRepository.find({ order: { name: 'ASC' } });
+  async findAll(query: QueryCategoryDto) {
+    const qb = this.categoryRepository.createQueryBuilder('category');
+
+    if (query.search) {
+      qb.andWhere('category.name ILIKE :search', {
+        search: `%${query.search}%`,
+      });
+    }
+
+    qb.orderBy('category.name', 'ASC');
+
+    if (query.limit) {
+      qb.limit(query.limit);
+    }
+
+    return qb.getMany();
   }
 
   async findOne(id: number) {

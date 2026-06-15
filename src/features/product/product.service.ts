@@ -101,7 +101,7 @@ export class ProductService {
   }
 
   async create(data: CreateProductDto) {
-    await this.ensureCategoryExists(data.categoryId);
+    const categoryId = await this.getOrCreateCategoryByName(data.categoryName);
 
     const product = this.productRepository.create({
       name: data.name,
@@ -109,7 +109,7 @@ export class ProductService {
       price: data.price,
       stock: data.stock,
       imageUrl: data.imageUrl ?? '',
-      categoryId: data.categoryId,
+      categoryId: categoryId,
     });
 
     const saved = await this.productRepository.save(product);
@@ -120,11 +120,14 @@ export class ProductService {
     const product = await this.productRepository.findOneBy({ id });
     if (!product) throw new NotFoundException('Producto no encontrado');
 
-    if (data.categoryId && data.categoryId !== product.categoryId) {
-      await this.ensureCategoryExists(data.categoryId);
+    const updatedData: any = { ...data };
+    if (data.categoryName) {
+      const categoryId = await this.getOrCreateCategoryByName(data.categoryName);
+      updatedData.categoryId = categoryId;
+      delete updatedData.categoryName;
     }
 
-    Object.assign(product, data);
+    Object.assign(product, updatedData);
     await this.productRepository.save(product);
     return this.findOne(id);
   }
@@ -148,11 +151,17 @@ export class ProductService {
     return { id };
   }
 
-  private async ensureCategoryExists(categoryId: number) {
-    const exists = await this.categoryRepository.existsBy({ id: categoryId });
-    if (!exists) {
-      throw new BadRequestException(`La categoría ${categoryId} no existe`);
+  private async getOrCreateCategoryByName(name: string): Promise<number> {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      throw new BadRequestException('El nombre de la categoría no puede estar vacío');
     }
+    let category = await this.categoryRepository.findOneBy({ name: trimmedName });
+    if (!category) {
+      category = this.categoryRepository.create({ name: trimmedName });
+      category = await this.categoryRepository.save(category);
+    }
+    return category.id;
   }
 
   private withStatus(product: ProductTypeOrmEntity) {

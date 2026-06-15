@@ -28,9 +28,10 @@ export class CreateProductDto {
   @Min(0)
   stock: number;
 
-  @IsInt()
-  @IsPositive()
-  categoryId: number;
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(50)
+  categoryName: string;
 
   @IsOptional()
   @IsString()

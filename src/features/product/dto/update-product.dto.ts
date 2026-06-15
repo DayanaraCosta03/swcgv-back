@@ -32,9 +32,10 @@ export class UpdateProductDto {
   stock?: number;
 
   @IsOptional()
-  @IsInt()
-  @IsPositive()
-  categoryId?: number;
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(50)
+  categoryName?: string;
 
   @IsOptional()
   @IsString()
