@@ -12,7 +12,7 @@ import { SecurityConfigService } from './security';
       useFactory: (securityService: SecurityConfigService) => ({
         global: true,
         secret: securityService.JWT_ACCESS_TOKEN_SECRET,
-        signOptions: { expiresIn: '15m' },
+        signOptions: { expiresIn: '7d' },
       }),
       inject: [SecurityConfigService],
     }),
