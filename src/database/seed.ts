@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { AppModule } from '../app.module';
 import { MAIN_DATA_SOURCE } from './database.provider';
 import { UserTypeormEntity } from './entities/user.typeorm.entity';
+import { CategoryTypeOrmEntity } from './entities/category.typeorm.entity';
 
 async function bootstrap() {
   console.log('Starting database seeding...');
@@ -45,6 +46,29 @@ async function bootstrap() {
       await userRepository.save(user);
       console.log('User created successfully.');
     }
+
+    // Seed categories
+    const categoryRepository = dataSource.getRepository(CategoryTypeOrmEntity);
+    console.log('Seeding categories...');
+    const categoriesToSeed = [
+      'Flores',
+      'Arbustos',
+      'Árboles',
+      'Suculentas y Cactus',
+      'Interior',
+    ];
+
+    for (const name of categoriesToSeed) {
+      const exists = await categoryRepository.findOneBy({ name });
+      if (!exists) {
+        console.log(`Creating category: ${name}`);
+        const category = categoryRepository.create({ name });
+        await categoryRepository.save(category);
+      } else {
+        console.log(`Category already exists: ${name}`);
+      }
+    }
+    console.log('Categories seeded successfully.');
   } catch (error) {
     console.error('Error during seeding:', error);
     process.exit(1);

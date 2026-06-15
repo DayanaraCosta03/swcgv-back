@@ -5,9 +5,10 @@ import { ProductProvider } from 'src/database/entities/product.typeorm.entity';
 
 import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AuthModule],
   controllers: [ProductController],
   providers: [ProductService, ProductProvider, CategoryProvider],
   exports: [ProductService],

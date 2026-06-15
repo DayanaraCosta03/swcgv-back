@@ -7,16 +7,18 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { Roles } from 'src/features/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/features/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/features/auth/guards/roles.guard';
 
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
-// SECURITY: Estos endpoints aún NO exigen autenticación/rol. Antes de producción,
-// proteger con un guard JWT (p.ej. @UseGuards(JwtAuthGuard)) y restringir la
-// escritura (POST/PATCH/DELETE) al rol 'admin'. Ref: OWASP API1/API5 (BOLA/BFLA).
 @Controller('categories')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CategoryController {
   constructor(private readonly service: CategoryService) {}
 
@@ -31,11 +33,13 @@ export class CategoryController {
   }
 
   @Post()
+  @Roles('admin')
   create(@Body() data: CreateCategoryDto) {
     return this.service.create(data);
   }
 
   @Patch(':id')
+  @Roles('admin')
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: UpdateCategoryDto,
@@ -44,6 +48,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
+  @Roles('admin')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.service.remove(id);
   }

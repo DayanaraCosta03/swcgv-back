@@ -151,9 +151,7 @@ export class ProductService {
   private async ensureCategoryExists(categoryId: number) {
     const exists = await this.categoryRepository.existsBy({ id: categoryId });
     if (!exists) {
-      throw new BadRequestException(
-        `La categoría ${categoryId} no existe`,
-      );
+      throw new BadRequestException(`La categoría ${categoryId} no existe`);
     }
   }
 

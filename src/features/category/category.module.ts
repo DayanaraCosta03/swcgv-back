@@ -4,9 +4,10 @@ import { CategoryProvider } from 'src/database/entities/category.typeorm.entity'
 
 import { CategoryController } from './category.controller';
 import { CategoryService } from './category.service';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AuthModule],
   controllers: [CategoryController],
   providers: [CategoryService, CategoryProvider],
   exports: [CategoryService],

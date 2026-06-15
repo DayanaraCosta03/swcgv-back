@@ -1,8 +1,9 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { Provider } from '@nestjs/common';
 import { DatabaseConfigService } from 'src/config';
 import { DataSource } from 'typeorm';
-import * as fs from 'fs';
-import * as path from 'path';
 
 export const MAIN_DATA_SOURCE = Symbol('MAIN_DATA_SOURCE');
 

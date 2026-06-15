@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
+import {
+  IsIn,
+  IsInt,
+  IsOptional,
+  IsString,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 /**
  * Filtros del listado de inventario (botones "Buscar", "Categoría", "Ordenar"

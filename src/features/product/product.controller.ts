@@ -8,17 +8,19 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { Roles } from 'src/features/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/features/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/features/auth/guards/roles.guard';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { QueryProductDto } from './dto/query-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductService } from './product.service';
 
-// SECURITY: Estos endpoints aún NO exigen autenticación/rol. Antes de producción,
-// proteger con un guard JWT (p.ej. @UseGuards(JwtAuthGuard)) y restringir la
-// escritura (POST/PATCH/DELETE) al rol 'admin'. Ref: OWASP API1/API5 (BOLA/BFLA).
 @Controller('products')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ProductController {
   constructor(private readonly service: ProductService) {}
 
@@ -38,16 +40,22 @@ export class ProductController {
   }
 
   @Post()
+  @Roles('admin')
   create(@Body() data: CreateProductDto) {
     return this.service.create(data);
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateProductDto) {
+  @Roles('admin')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: UpdateProductDto,
+  ) {
     return this.service.update(id, data);
   }
 
   @Delete(':id')
+  @Roles('admin')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.service.remove(id);
   }
