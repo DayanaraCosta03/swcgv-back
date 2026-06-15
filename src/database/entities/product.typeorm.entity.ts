@@ -37,8 +37,8 @@ export class ProductTypeOrmEntity {
   @Column({ type: 'integer' })
   categoryId: number;
 
-  @ManyToOne(() => CategoryTypeOrmEntity, (category) => category.id)
-  @JoinColumn({ name: 'category_id' })
+  @ManyToOne(() => CategoryTypeOrmEntity, (category) => category.products)
+  @JoinColumn({ name: 'categoryId' })
   category: CategoryTypeOrmEntity;
 
   @OneToMany(() => SaleItemTypeOrmEntity, (saleItem) => saleItem.product)
