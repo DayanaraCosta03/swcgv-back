@@ -6,6 +6,7 @@ import { AppModule } from '../app.module';
 import { MAIN_DATA_SOURCE } from './database.provider';
 import { UserTypeormEntity } from './entities/user.typeorm.entity';
 import { CategoryTypeOrmEntity } from './entities/category.typeorm.entity';
+import { ClientTypeOrmEntity } from './entities/client.typeorm.entity';
 
 async function bootstrap() {
   console.log('Starting database seeding...');
@@ -69,6 +70,28 @@ async function bootstrap() {
       }
     }
     console.log('Categories seeded successfully.');
+
+    // Seed clients
+    const clientRepository = dataSource.getRepository(ClientTypeOrmEntity);
+    console.log('Seeding clients...');
+    const clientsToSeed = [
+      { name: 'Juan Pérez', phoneNumber: '987654321', notes: 'Cliente frecuente, entrega por la mañana.' },
+      { name: 'María Gómez', phoneNumber: '912345678', notes: 'Descuento del 10% aplicado.' },
+      { name: 'Carlos Rodríguez', phoneNumber: '955443322', notes: 'Pago en efectivo.' },
+      { name: 'Ana Martínez', phoneNumber: '933221100', notes: 'Prefiere rosas rojas.' },
+    ];
+
+    for (const c of clientsToSeed) {
+      const exists = await clientRepository.findOneBy({ name: c.name });
+      if (!exists) {
+        console.log(`Creating client: ${c.name}`);
+        const client = clientRepository.create(c);
+        await clientRepository.save(client);
+      } else {
+        console.log(`Client already exists: ${c.name}`);
+      }
+    }
+    console.log('Clients seeded successfully.');
   } catch (error) {
     console.error('Error during seeding:', error);
     process.exit(1);

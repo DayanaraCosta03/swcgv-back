@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   OneToMany,
@@ -22,6 +23,9 @@ export class PurchaseItemTypeOrmEntity {
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   totalPrice: number;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date;
 
   @OneToMany(() => ProductTypeOrmEntity, (product) => product.purchaseItems)
   @JoinColumn({ name: 'product_id' })

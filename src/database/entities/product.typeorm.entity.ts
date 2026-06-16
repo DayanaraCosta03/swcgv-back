@@ -2,6 +2,7 @@ import { Provider } from '@nestjs/common';
 import {
   Column,
   DataSource,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -36,6 +37,9 @@ export class ProductTypeOrmEntity {
 
   @Column({ type: 'integer' })
   categoryId: number;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date;
 
   @ManyToOne(() => CategoryTypeOrmEntity, (category) => category.products)
   @JoinColumn({ name: 'categoryId' })

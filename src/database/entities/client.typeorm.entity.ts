@@ -2,6 +2,7 @@ import { Provider } from '@nestjs/common';
 import {
   Column,
   DataSource,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -23,6 +24,9 @@ export class ClientTypeOrmEntity {
 
   @Column({ type: 'varchar', length: '255', nullable: true })
   notes?: string;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date;
 
   @OneToMany(() => SaleTypeOrmEntity, (sale) => sale.client)
   sales: SaleTypeOrmEntity[];

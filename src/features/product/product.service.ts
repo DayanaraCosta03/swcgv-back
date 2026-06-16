@@ -136,18 +136,7 @@ export class ProductService {
     const product = await this.productRepository.findOneBy({ id });
     if (!product) throw new NotFoundException('Producto no encontrado');
 
-    try {
-      await this.productRepository.remove(product);
-    } catch (error) {
-      // No filtramos el detalle del error de BD al cliente (OWASP A05).
-      if (error instanceof QueryFailedError) {
-        throw new ConflictException(
-          'No se puede eliminar el producto porque tiene ventas o compras asociadas',
-        );
-      }
-      throw error;
-    }
-
+    await this.productRepository.softRemove(product);
     return { id };
   }
 

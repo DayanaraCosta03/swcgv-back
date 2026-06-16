@@ -1,5 +1,11 @@
 import { Provider } from '@nestjs/common';
-import { Column, DataSource, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  DataSource,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { MAIN_DATA_SOURCE } from '../database.provider';
 
@@ -25,6 +31,9 @@ export class UserTypeormEntity {
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date;
 }
 
 export const USER_REPOSITORY = Symbol('USER');

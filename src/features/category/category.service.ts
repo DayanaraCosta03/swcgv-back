@@ -61,18 +61,19 @@ export class CategoryService {
   }
 
   async remove(id: number) {
-    const category = await this.findOne(id);
-    try {
-      await this.categoryRepository.remove(category);
-    } catch (error) {
-      // No exponemos el detalle del error de BD al cliente (OWASP A05).
-      if (error instanceof QueryFailedError) {
-        throw new ConflictException(
-          'No se puede eliminar la categoría porque tiene productos asociados',
-        );
-      }
-      throw error;
+    const category = await this.categoryRepository.findOne({
+      where: { id },
+      relations: { products: true },
+    });
+    if (!category) throw new NotFoundException('Categoría no encontrada');
+
+    if (category.products && category.products.length > 0) {
+      throw new ConflictException(
+        'No se puede eliminar la categoría porque tiene productos asociados',
+      );
     }
+
+    await this.categoryRepository.softRemove(category);
     return { id };
   }
 
