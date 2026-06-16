@@ -19,8 +19,17 @@ export class SupplierTypeOrmEntity {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column({ type: 'varchar', length: 15 })
-  phoneNumber: string;
+  @Column({ type: 'varchar', length: 15, nullable: true })
+  phoneNumber?: string;
+
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  ruc?: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  email?: string;
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
   @Column({ type: 'text', nullable: true })
   address?: string;

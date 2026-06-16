@@ -7,6 +7,7 @@ import { MAIN_DATA_SOURCE } from './database.provider';
 import { UserTypeormEntity } from './entities/user.typeorm.entity';
 import { CategoryTypeOrmEntity } from './entities/category.typeorm.entity';
 import { ClientTypeOrmEntity } from './entities/client.typeorm.entity';
+import { SupplierTypeOrmEntity } from './entities/supplier.typeorm.entity';
 
 async function bootstrap() {
   console.log('Starting database seeding...');
@@ -125,6 +126,49 @@ async function bootstrap() {
       await clientRepository.save(client);
     }
     console.log('Clients seeded successfully.');
+
+    // Seed suppliers
+    const supplierRepository = dataSource.getRepository(SupplierTypeOrmEntity);
+    console.log('Seeding suppliers...');
+    const suppliersToSeed = [
+      {
+        name: 'Vivero El Sol',
+        phoneNumber: '988776655',
+        ruc: '20123456789',
+        email: 'ventas@viveroelsol.com',
+        address: 'Carretera Industrial Km 5, Trujillo',
+        isActive: true,
+      },
+      {
+        name: 'FertiOrganics S.A.C.',
+        phoneNumber: '944332211',
+        ruc: '20876543210',
+        email: 'contacto@fertiorganics.pe',
+        address: 'Parque Industrial Mz. B, La Esperanza',
+        isActive: true,
+      },
+      {
+        name: 'Plásticos Agrícolas Horticult',
+        phoneNumber: '999888777',
+        ruc: '20555544443',
+        email: 'info@plasticoshorticult.com',
+        address: 'Av. Metropolitana 456, Trujillo',
+        isActive: false,
+      },
+    ];
+
+    for (const s of suppliersToSeed) {
+      let supplier = await supplierRepository.findOneBy({ name: s.name });
+      if (!supplier) {
+        console.log(`Creating supplier: ${s.name}`);
+        supplier = supplierRepository.create(s);
+      } else {
+        console.log(`Updating supplier: ${s.name}`);
+        Object.assign(supplier, s);
+      }
+      await supplierRepository.save(supplier);
+    }
+    console.log('Suppliers seeded successfully.');
   } catch (error) {
     console.error('Error during seeding:', error);
     process.exit(1);
