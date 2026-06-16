@@ -75,21 +75,54 @@ async function bootstrap() {
     const clientRepository = dataSource.getRepository(ClientTypeOrmEntity);
     console.log('Seeding clients...');
     const clientsToSeed = [
-      { name: 'Juan Pérez', phoneNumber: '987654321', notes: 'Cliente frecuente, entrega por la mañana.' },
-      { name: 'María Gómez', phoneNumber: '912345678', notes: 'Descuento del 10% aplicado.' },
-      { name: 'Carlos Rodríguez', phoneNumber: '955443322', notes: 'Pago en efectivo.' },
-      { name: 'Ana Martínez', phoneNumber: '933221100', notes: 'Prefiere rosas rojas.' },
+      {
+        name: 'Juan Pérez',
+        phoneNumber: '987654321',
+        dni: '12345678',
+        email: 'juan.perez@example.com',
+        address: 'Av. Larco 123, Trujillo',
+        isActive: true,
+        notes: 'Cliente frecuente, entrega por la mañana.',
+      },
+      {
+        name: 'María Gómez',
+        phoneNumber: '912345678',
+        dni: '87654321',
+        email: 'maria.gomez@example.com',
+        address: 'Calle Real 456, El Porvenir',
+        isActive: true,
+        notes: 'Descuento del 10% aplicado.',
+      },
+      {
+        name: 'Carlos Rodríguez',
+        phoneNumber: '955443322',
+        dni: '44556677',
+        email: 'carlos.rod@example.com',
+        address: 'Jr. Pizarro 789, Trujillo',
+        isActive: false,
+        notes: 'Pago en efectivo.',
+      },
+      {
+        name: 'Ana Martínez',
+        phoneNumber: '933221100',
+        dni: '11223344',
+        email: 'ana.martinez@example.com',
+        address: 'Av. América Sur 1010, Trujillo',
+        isActive: true,
+        notes: 'Prefiere rosas rojas.',
+      },
     ];
 
     for (const c of clientsToSeed) {
-      const exists = await clientRepository.findOneBy({ name: c.name });
-      if (!exists) {
+      let client = await clientRepository.findOneBy({ name: c.name });
+      if (!client) {
         console.log(`Creating client: ${c.name}`);
-        const client = clientRepository.create(c);
-        await clientRepository.save(client);
+        client = clientRepository.create(c);
       } else {
-        console.log(`Client already exists: ${c.name}`);
+        console.log(`Updating client: ${c.name}`);
+        Object.assign(client, c);
       }
+      await clientRepository.save(client);
     }
     console.log('Clients seeded successfully.');
   } catch (error) {

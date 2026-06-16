@@ -25,7 +25,7 @@ export class ClientService {
 
     if (query.search) {
       qb.andWhere(
-        '(client.name ILIKE :search OR client.phoneNumber ILIKE :search)',
+        '(client.name ILIKE :search OR client.phoneNumber ILIKE :search OR client.dni ILIKE :search OR client.email ILIKE :search)',
         { search: `%${query.search}%` },
       );
     }
@@ -60,6 +60,10 @@ export class ClientService {
     const client = this.clientRepository.create({
       name: data.name,
       phoneNumber: data.phoneNumber ?? '',
+      dni: data.dni ?? '',
+      email: data.email ?? '',
+      address: data.address ?? '',
+      isActive: data.isActive ?? true,
       notes: data.notes ?? '',
     });
     return this.clientRepository.save(client);

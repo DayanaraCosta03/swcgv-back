@@ -22,6 +22,18 @@ export class ClientTypeOrmEntity {
   @Column({ type: 'varchar', length: 15, nullable: true })
   phoneNumber?: string;
 
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  dni?: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  email?: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  address?: string;
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
+
   @Column({ type: 'varchar', length: '255', nullable: true })
   notes?: string;
 
