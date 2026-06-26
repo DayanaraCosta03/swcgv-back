@@ -5,7 +5,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -44,11 +44,11 @@ export class SaleItemTypeOrmEntity {
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt?: Date;
 
-  @OneToMany(() => ProductTypeOrmEntity, (product) => product.saleItems)
+  @ManyToOne(() => ProductTypeOrmEntity, (product) => product.saleItems)
   @JoinColumn({ name: 'product_id' })
   product: ProductTypeOrmEntity;
 
-  @OneToMany(() => SaleTypeOrmEntity, (sale) => sale.saleItems)
+  @ManyToOne(() => SaleTypeOrmEntity, (sale) => sale.saleItems)
   @JoinColumn({ name: 'sale_id' })
   sale: SaleTypeOrmEntity;
 }
