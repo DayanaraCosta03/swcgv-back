@@ -8,7 +8,7 @@ import {
   CATEGORY_REPOSITORY,
   CategoryTypeOrmEntity,
 } from 'src/database/entities/category.typeorm.entity';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { QueryCategoryDto } from './dto/query-category.dto';

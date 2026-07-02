@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Inject,
   Injectable,
   NotFoundException,
@@ -13,7 +12,7 @@ import {
   PRODUCT_REPOSITORY,
   ProductTypeOrmEntity,
 } from 'src/database/entities/product.typeorm.entity';
-import { Between, MoreThan, QueryFailedError, Repository } from 'typeorm';
+import { Between, MoreThan, Repository } from 'typeorm';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { QueryProductDto } from './dto/query-product.dto';
@@ -120,11 +119,11 @@ export class ProductService {
     const product = await this.productRepository.findOneBy({ id });
     if (!product) throw new NotFoundException('Producto no encontrado');
 
-    const updatedData: any = { ...data };
-    if (data.categoryName) {
-      const categoryId = await this.getOrCreateCategoryByName(data.categoryName);
-      updatedData.categoryId = categoryId;
-      delete updatedData.categoryName;
+    const { categoryName, ...rest } = data;
+    const updatedData: Partial<ProductTypeOrmEntity> = { ...rest };
+    if (categoryName) {
+      updatedData.categoryId =
+        await this.getOrCreateCategoryByName(categoryName);
     }
 
     Object.assign(product, updatedData);
@@ -143,9 +142,13 @@ export class ProductService {
   private async getOrCreateCategoryByName(name: string): Promise<number> {
     const trimmedName = name.trim();
     if (!trimmedName) {
-      throw new BadRequestException('El nombre de la categoría no puede estar vacío');
+      throw new BadRequestException(
+        'El nombre de la categoría no puede estar vacío',
+      );
     }
-    let category = await this.categoryRepository.findOneBy({ name: trimmedName });
+    let category = await this.categoryRepository.findOneBy({
+      name: trimmedName,
+    });
     if (!category) {
       category = this.categoryRepository.create({ name: trimmedName });
       category = await this.categoryRepository.save(category);

@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        # --passWithNoTests: los tests unitarios llegan con los modulos de F2
+        # (cash-register, purchase). Quitar el flag cuando existan specs.
+        run: npm test -- --passWithNoTests
+
+      - name: Build
+        run: npm run build
+
+      - name: Dependency audit
+        # No bloqueante: hay vulnerabilidades high sin fix no-breaking, tratadas
+        # como excepciones aceptadas (ver docs/adr/0001 y progreso/fase-1.2.md).
+        # Visible en los logs para detectar nuevas o cuando aparezca un fix.
+        continue-on-error: true
+        run: npm audit --audit-level=high
+
+  secret-scan:
+    # Escaneo de secretos con gitleaks. Reemplaza en CI al hook local de
+    # pre-commit, bloqueado en la maquina de desarrollo por una politica
+    # Windows Application Control (ver progreso/fase-1.2.md).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run gitleaks
+        run: |
+          curl -sSfL -o gitleaks.tar.gz https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz
+          tar -xzf gitleaks.tar.gz gitleaks
+          ./gitleaks detect --source . --redact --exit-code 1
