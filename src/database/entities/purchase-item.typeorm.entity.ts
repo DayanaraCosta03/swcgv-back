@@ -3,7 +3,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -27,11 +27,14 @@ export class PurchaseItemTypeOrmEntity {
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt?: Date;
 
-  @OneToMany(() => ProductTypeOrmEntity, (product) => product.purchaseItems)
+  // Un ítem de compra pertenece a UN producto y a UNA compra (ManyToOne).
+  // Los lados inversos (product.purchaseItems / purchase.purchaseItems) son
+  // OneToMany, así que este lado —el dueño de la FK— debe ser ManyToOne.
+  @ManyToOne(() => ProductTypeOrmEntity, (product) => product.purchaseItems)
   @JoinColumn({ name: 'product_id' })
   product: ProductTypeOrmEntity;
 
-  @OneToMany(() => PurchaseTypeOrmEntity, (purchase) => purchase.purchaseItems)
+  @ManyToOne(() => PurchaseTypeOrmEntity, (purchase) => purchase.purchaseItems)
   @JoinColumn({ name: 'purchase_id' })
   purchase: PurchaseTypeOrmEntity;
 }

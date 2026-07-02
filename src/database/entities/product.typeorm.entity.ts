@@ -29,6 +29,11 @@ export class ProductTypeOrmEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
+  // Costo del producto: lo actualiza cada compra (F2.2). Nullable hasta la
+  // primera compra o hasta que se capture desde el inventario (F4.1).
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  cost: number | null;
+
   @Column({ type: 'integer' })
   stock: number;
 

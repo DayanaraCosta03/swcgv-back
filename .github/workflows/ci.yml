@@ -24,9 +24,7 @@ jobs:
         run: npm run lint
 
       - name: Test
-        # --passWithNoTests: los tests unitarios llegan con los modulos de F2
-        # (cash-register, purchase). Quitar el flag cuando existan specs.
-        run: npm test -- --passWithNoTests
+        run: npm test
 
       - name: Build
         run: npm run build
