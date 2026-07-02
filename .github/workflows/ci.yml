@@ -24,6 +24,27 @@ jobs:
         run: npm run lint
 
       - name: Test
+        # Los unit tests mockean los repositorios (no tocan la DB), pero la
+        # cadena de imports carga @nestjs/config y valida el entorno con joi.
+        # Estos valores son dummy solo para pasar esa validacion.
+        env:
+          APP_NAME: swcgv-test
+          PORT: "8000"
+          IS_HTTPS: "false"
+          MAIN_DATABASE_HOST: localhost
+          MAIN_DATABASE_PORT: "5432"
+          MAIN_DATABASE_USERNAME: test
+          MAIN_DATABASE_PASSWORD: test
+          MAIN_DATABASE_NAME: test
+          MAIN_DATABASE_SYNCHRONIZE: "false"
+          MAIN_DATABASE_SSL: "false"
+          MAIN_DATABASE_TIMEZONE: "+00:00"
+          CONTENT_SECURITY_POLICY: "false"
+          COOKIE_KEY: test-cookie-key
+          CORS_ORIGINS: http://localhost:3000
+          CORS_CREDENTIALS: "false"
+          CORS_METHODS: "*"
+          JWT_ACCESS_TOKEN_SECRET: test-jwt-secret
         run: npm test
 
       - name: Build
