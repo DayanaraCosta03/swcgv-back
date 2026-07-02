@@ -6,6 +6,8 @@ import {
   IsInt,
   IsOptional,
   IsPositive,
+  IsString,
+  MaxLength,
   ValidateNested,
 } from 'class-validator';
 import type {
@@ -15,6 +17,7 @@ import type {
 
 const PAYMENT_METHODS: PaymentMethod[] = [
   'EFECTIVO',
+  'TARJETA',
   'YAPE',
   'PLIN',
   'TRANSFERENCIA',
@@ -51,6 +54,26 @@ export class CreateSaleDto {
   /** Tipo de comprobante a emitir. */
   @IsIn(DOCUMENT_TYPES)
   documentType: DocumentType;
+
+  /**
+   * Clave de idempotencia (opcional). Si el cliente la envía, un reintento con
+   * la misma clave devuelve la venta ya registrada en vez de duplicarla. Si no
+   * llega, el servidor genera una. El POS nuevo (F5.2) siempre la envía.
+   */
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  idempotencyKey?: string;
+
+  /**
+   * Nro. de operación de Yape (opcional a nivel de datos para no romper el
+   * front viejo). El POS nuevo (F5.2) lo exige en el cliente cuando el método
+   * es YAPE.
+   */
+  @IsOptional()
+  @IsString()
+  @MaxLength(30)
+  yapeOperation?: string;
 
   @IsArray()
   @ArrayNotEmpty()

@@ -15,7 +15,12 @@ import { ClientTypeOrmEntity } from './client.typeorm.entity';
 import { SaleItemTypeOrmEntity } from './sale-item.typeorm.entity';
 
 /** Métodos de pago aceptados en el vivero. */
-export type PaymentMethod = 'EFECTIVO' | 'YAPE' | 'PLIN' | 'TRANSFERENCIA';
+export type PaymentMethod =
+  | 'EFECTIVO'
+  | 'TARJETA'
+  | 'YAPE'
+  | 'PLIN'
+  | 'TRANSFERENCIA';
 
 /** Tipo de comprobante que se emite por la venta. */
 export type DocumentType = 'BOLETA' | 'FACTURA' | 'TICKET';
@@ -31,13 +36,34 @@ export class SaleTypeOrmEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   totalAmount: number;
 
-// Método de pago. `default` evita nulls en filas antiguas al sincronizar.
+  // Método de pago. `default` evita nulls en filas antiguas al sincronizar.
   @Column({ type: 'varchar', length: 20, default: 'EFECTIVO' })
   paymentMethod: PaymentMethod;
 
   // Tipo de comprobante emitido (boleta / factura / ticket).
   @Column({ type: 'varchar', length: 20, default: 'TICKET' })
   documentType: DocumentType;
+
+  // Clave de idempotencia: evita registrar dos veces la misma venta ante un
+  // reintento de red. Unique + nullable (las filas antiguas quedan en null;
+  // las ventas nuevas siempre la llevan, generada por el servidor si no llega).
+  @Column({
+    name: 'idempotency_key',
+    type: 'varchar',
+    length: 64,
+    unique: true,
+    nullable: true,
+  })
+  idempotencyKey: string | null;
+
+  // Nro. de operación cuando el pago es Yape (opcional a nivel de datos).
+  @Column({
+    name: 'yape_operation',
+    type: 'varchar',
+    length: 30,
+    nullable: true,
+  })
+  yapeOperation: string | null;
 
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt?: Date;

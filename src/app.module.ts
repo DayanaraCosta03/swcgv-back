@@ -10,6 +10,7 @@ import { ProductModule } from './features/product/product.module';
 import { PurchaseModule } from './features/purchase/purchase.module';
 import { ReportModule } from './features/report/report.module';
 import { SaleModule } from './features/sale/sale.module';
+import { SettingsModule } from './features/settings/settings.module';
 import { SupplierModule } from './features/supplier/supplier.module';
 
 @Module({
@@ -25,6 +26,7 @@ import { SupplierModule } from './features/supplier/supplier.module';
     ReportModule,
     CashRegisterModule,
     PurchaseModule,
+    SettingsModule,
   ],
 })
 export class AppModule {}

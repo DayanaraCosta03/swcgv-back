@@ -1,9 +1,12 @@
+import { randomUUID } from 'node:crypto';
+
 import {
   BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { MAIN_DATA_SOURCE } from 'src/database/database.provider';
 import { ClientTypeOrmEntity } from 'src/database/entities/client.typeorm.entity';
 import { ProductTypeOrmEntity } from 'src/database/entities/product.typeorm.entity';
 import { SaleItemTypeOrmEntity } from 'src/database/entities/sale-item.typeorm.entity';
@@ -11,7 +14,6 @@ import {
   SALE_REPOSITORY,
   SaleTypeOrmEntity,
 } from 'src/database/entities/sale.typeorm.entity';
-import { MAIN_DATA_SOURCE } from 'src/database/database.provider';
 import { DataSource, Repository } from 'typeorm';
 
 import { CreateSaleDto } from './dto/create-sale.dto';
@@ -39,6 +41,16 @@ export class SaleService {
    * no se descuenta stock ni se crea una venta a medias.
    */
   async create(data: CreateSaleDto) {
+    // Idempotencia: si llega una clave ya registrada, devolvemos la venta
+    // existente en vez de crear otra (reintento de red seguro).
+    if (data.idempotencyKey) {
+      const existing = await this.saleRepository.findOne({
+        where: { idempotencyKey: data.idempotencyKey },
+      });
+      if (existing) return this.findOne(existing.id);
+    }
+    const idempotencyKey = data.idempotencyKey ?? randomUUID();
+
     const saleId = await this.dataSource.transaction(async (manager) => {
       let client: ClientTypeOrmEntity | undefined;
       if (data.clientId) {
@@ -49,13 +61,14 @@ export class SaleService {
         client = found;
       }
 
-
       const sale = await manager.save(
         manager.create(SaleTypeOrmEntity, {
           saleDate: new Date(),
           totalAmount: 0,
           paymentMethod: data.paymentMethod,
           documentType: data.documentType,
+          idempotencyKey,
+          yapeOperation: data.yapeOperation ?? null,
           client,
         }),
       );
